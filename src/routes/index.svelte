@@ -10,7 +10,7 @@ onMount(async () => {
 	.then(
 		(data) => {
 			players = data
-			console.log(players[0].first_name)
+			console.log(players[0])
 		})
   })
 </script>
@@ -23,7 +23,7 @@ onMount(async () => {
 	<title>Sapper project template</title>
 </svelte:head>
 
-<h1>Players</h1>
+<h1 class="font-bold">Players</h1>
 
 	{#each players as player}
 		<li>
