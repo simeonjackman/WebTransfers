@@ -9,6 +9,7 @@
     "start": "node __sapper__/build"
   },
   "dependencies": {
+    "@tailwindcss/ui": "^0.6.2",
     "compression": "^1.7.1",
     "polka": "next",
     "postcss": "^8.1.4",
