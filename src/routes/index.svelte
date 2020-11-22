@@ -2,8 +2,12 @@
 import { onMount } from "svelte";
 let searchFilter = "";
 let players = [];
-$: currentPlayers = players.filter(item => item.first_name.toLowerCase().includes(searchFilter) || item.second_name.toLowerCase().includes(searchFilter.toLowerCase()));
+let y; // user to detect scroll
+let sortDict = {}; // used to sort keys for player info
 
+
+$: currentPlayers = players.filter(item => item.first_name.toLowerCase().includes(searchFilter) || item.second_name.toLowerCase().includes(searchFilter.toLowerCase()));
+$: playersToShow = y > 100 ? players.length : 50; // load all players on start of scroll
 onMount(async () => {
 	console.log("Getting players")
     await fetch(`http://premierleaguefantasy.site/players?sort_by=transfers_in_event`,{
@@ -17,13 +21,13 @@ onMount(async () => {
 			console.log(players[10])
 		})
   })
-let sortDict = {};
 
 function sortPlayers(key) {
+	console.log(y)
 	if (key in sortDict){
 		sortDict[key] = sortDict[key] * -1 // invert sort order
 	} else {
-		sortDict[key] = -1
+		sortDict[key] = 1
 	}
 	const direction = sortDict[key]
 	currentPlayers = currentPlayers.sort(function(a, b) {
@@ -49,7 +53,7 @@ function sortPlayers(key) {
 
 
 
-
+<svelte:window bind:scrollY={y}/>
 
 <div class="flex flex-col">
 
@@ -83,7 +87,7 @@ function sortPlayers(key) {
 					</tr>
 				</thead>
 					<tbody class="bg-white divide-y divide-gray-200">
-						{#each currentPlayers.reverse() as player}
+						{#each currentPlayers.slice(0,playersToShow) as player}
 							<tr>
 							<td class="px-6 py-4 whitespace-no-wrap">
 								<div class="flex items-center">
