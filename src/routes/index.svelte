@@ -17,19 +17,24 @@ onMount(async () => {
 			console.log(players[10])
 		})
   })
-  let lastKey = "";
+let sortDict = {};
+
 function sortPlayers(key) {
-		currentPlayers = currentPlayers.sort(function(a, b) {
-		// direction is used for reverse sort
-		let direction = (key == lastKey) ? 1 : -1
-		let keyA = a[key];
-		let keyB = b[key];
-		// Compare the 2 keys
-		if (keyA < keyB) return -1 * direction;
-		if (keyA > keyB) return 1 * direction;
-		return 0;
-		}).reverse();
-		lastKey = key;
+	if (key in sortDict){
+		sortDict[key] = sortDict[key] * -1 // invert sort order
+	} else {
+		sortDict[key] = 1
+	}
+	const direction = sortDict[key]
+	currentPlayers = currentPlayers.sort(function(a, b) {
+	// direction is used for reverse sort
+	let keyA = a[key];
+	let keyB = b[key];
+	// Compare the 2 keys
+	if (keyA < keyB) return -1 * direction;
+	if (keyA > keyB) return 1 * direction;
+	return 0;
+	}).reverse();
 	}
 
 </script>
@@ -83,7 +88,7 @@ function sortPlayers(key) {
 							<td class="px-6 py-4 whitespace-no-wrap">
 								<div class="flex items-center">
 								<div class="flex-shrink-0 h-10 w-10">
-									<img class="h-10 w-10 rounded-full" src={'https://resources.premierleague.com/premierleague/photos/players/40x40/p' + player.code + ".png"} alt="">
+									<!-- <img class="h-10 w-10 rounded-full" src={'https://resources.premierleague.com/premierleague/photos/players/40x40/p' + player.code + ".png"} alt=""> -->
 								</div>
 								<div class="ml-4">
 									<div class="text-sm leading-5 font-medium text-gray-900">
