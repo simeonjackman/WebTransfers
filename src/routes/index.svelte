@@ -23,7 +23,7 @@ function sortPlayers(key) {
 	if (key in sortDict){
 		sortDict[key] = sortDict[key] * -1 // invert sort order
 	} else {
-		sortDict[key] = 1
+		sortDict[key] = -1
 	}
 	const direction = sortDict[key]
 	currentPlayers = currentPlayers.sort(function(a, b) {
