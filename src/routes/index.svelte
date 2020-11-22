@@ -2,6 +2,7 @@
 import { onMount } from "svelte";
 let searchFilter = "";
 let players = [];
+let selectedPlayers = [];
 let y; // user to detect scroll
 let sortDict = {}; // used to sort keys for player info
 
@@ -23,7 +24,6 @@ onMount(async () => {
   })
 
 function sortPlayers(key) {
-	console.log(y)
 	if (key in sortDict){
 		sortDict[key] = sortDict[key] * -1 // invert sort order
 	} else {
@@ -41,6 +41,15 @@ function sortPlayers(key) {
 	}).reverse();
 	}
 
+function toggleSelectPlayer(id) {
+		const index = selectedPlayers.indexOf(id);
+		if (index > -1) {
+		selectedPlayers = selectedPlayers.filter(item => item !== id);
+		} else {
+			selectedPlayers[selectedPlayers.length] = id;
+		}
+	}
+
 </script>
 
 <style>
@@ -55,6 +64,13 @@ function sortPlayers(key) {
 
 <svelte:window bind:scrollY={y}/>
 
+{#each currentPlayers.filter(p => selectedPlayers.includes(p.id)) as player}
+    <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+      {player.first_name} {player.second_name}
+    </h2>
+{/each}
+
+
 <div class="flex flex-col">
 
 	<input bind:value={searchFilter} class="focus:outline-none px-6 py-3 bg-gray-100 text-left font-medium text-gray-900 uppercase tracking-wider rounded-full" type="text" placeholder="Search...">
@@ -65,30 +81,30 @@ function sortPlayers(key) {
 				<table class="min-w-full divide-y divide-gray-200">
 				<thead>
 					<tr>
-					<th on:click={() => sortPlayers("second_name")} class="cursor-pointer hover:bg-gray-500 hover:text-gray-900 px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+					<th on:click={() => sortPlayers("second_name")} class="cursor-pointer hover:bg-gray-500 hover:text-gray-900 px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider w-4/12">
 						Name
 					</th>
-					<th on:click={() => sortPlayers("now_cost")} class="cursor-pointer hover:bg-gray-500 hover:text-gray-900 px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+					<th on:click={() => sortPlayers("now_cost")} class="cursor-pointer hover:bg-gray-500 hover:text-gray-900 px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider w-1/12">
 						Cost
 					</th>
-					<th on:click={() => sortPlayers("transfers_in_event")} class="cursor-pointer hover:bg-gray-500 hover:text-gray-900 px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+					<th on:click={() => sortPlayers("transfers_in_event")} class="cursor-pointer hover:bg-gray-500 hover:text-gray-900 px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider w-1/12">
 						Transfers
 					</th>
-					<th on:click={() => sortPlayers("goals_scored")} class="cursor-pointer hover:bg-gray-500 hover:text-gray-900 px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+					<th on:click={() => sortPlayers("goals_scored")} class="cursor-pointer hover:bg-gray-500 hover:text-gray-900 px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider w-1/12">
 						Goals
 					</th>
-					<th on:click={() => sortPlayers("assists")} class="cursor-pointer hover:bg-gray-500 hover:text-gray-900 px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+					<th on:click={() => sortPlayers("assists")} class="cursor-pointer hover:bg-gray-500 hover:text-gray-900 px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider w-1/12">
 						Assists
 					</th>
-					<th on:click={() => sortPlayers("total_points")} class="cursor-pointer hover:bg-gray-500 hover:text-gray-900 px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+					<th on:click={() => sortPlayers("total_points")} class="cursor-pointer hover:bg-gray-500 hover:text-gray-900 px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider w-1/12">
 						Total Points
 					</th>
-					<th class="px-6 py-3 bg-gray-50"></th>
+					<th class="px-6 py-3 bg-gray-50 w-2/12"></th>
 					</tr>
 				</thead>
 					<tbody class="bg-white divide-y divide-gray-200">
 						{#each currentPlayers.slice(0,playersToShow) as player}
-							<tr>
+							<tr class:bg-green-200={selectedPlayers.includes(player.id)}>
 							<td class="px-6 py-4 whitespace-no-wrap">
 								<div class="flex items-center">
 								<div class="flex-shrink-0 h-10 w-10">
@@ -129,7 +145,13 @@ function sortPlayers(key) {
 								</span>
 							</td>
 							<td class="px-6 py-4 whitespace-no-wrap text-right text-sm leading-5 font-medium">
-								<a href="#" class="text-indigo-600 hover:text-indigo-900">Select</a>
+								       <button
+									   	on:click={() => toggleSelectPlayer(player.id)}
+										type="button"
+										class="border border-gray-600 bg-gray-100 text-gray-900 rounded-md px-4 py-2 m-2 transition duration-300 ease select-none hover:bg-gray-900 hover:text-white focus:outline-none focus:shadow-outline"
+									>
+										{selectedPlayers.includes(player.id) ? "Deselect" : "Select"}
+									</button>
 							</td>
 							</tr>
 						{/each}
